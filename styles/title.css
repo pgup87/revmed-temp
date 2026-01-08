@@ -1,39 +1,97 @@
+/* =========================================================
+   Base Title Wrapper
+   ========================================================= */
+
 .title {
-  font-family: var(--font-primary);
-  color: var(--color-text-primary);
-  margin: 0 0 16px;
+  margin: 0 0 1rem;
 }
 
-/* Hero */
-.title--hero {
-  font-size: clamp(36px, 5vw, 64px);
-  font-weight: 700;
-  line-height: 1.1;
+/* Reset heading margins inside title wrapper */
+.title h1,
+.title h2,
+.title h3,
+.title h4,
+.title h5,
+.title h6 {
+  margin: 0;
+  font-family: var(--heading-font-family, inherit);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/* =========================================================
+   HERO TITLE
+   ========================================================= */
+
+.title.variant-hero {
+  margin-bottom: 2rem;
   text-align: center;
 }
 
-/* Section */
-.title--section {
-  font-size: 32px;
+.title.variant-hero h1,
+.title.variant-hero h2 {
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+/* =========================================================
+   SECTION TITLE (default)
+   ========================================================= */
+
+.title.variant-section h1,
+.title.variant-section h2 {
+  font-size: 2rem;
   font-weight: 600;
 }
 
-/* Subsection */
-.title--subsection {
-  font-size: 22px;
+/* =========================================================
+   SUBSECTION TITLE
+   ========================================================= */
+
+.title.variant-subsection h2,
+.title.variant-subsection h3 {
+  font-size: 1.375rem;
   font-weight: 600;
 }
 
-/* Eyebrow */
-.title--eyebrow {
-  font-size: 14px;
+/* =========================================================
+   EYEBROW / OVERLINE
+   ========================================================= */
+
+.title.variant-eyebrow {
+  margin-bottom: 0.5rem;
+}
+
+.title.variant-eyebrow h4,
+.title.variant-eyebrow h5,
+.title.variant-eyebrow h6 {
+  font-size: 0.875rem;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-accent, #005eb8);
 }
 
-/* CTA */
-.title--cta {
-  font-size: 20px;
+/* =========================================================
+   CTA TITLE
+   ========================================================= */
+
+.title.variant-cta h3,
+.title.variant-cta h4 {
+  font-size: 1.25rem;
   font-weight: 600;
+}
+
+/* =========================================================
+   OPTIONAL: Dark background support
+   ========================================================= */
+
+.section.dark .title h1,
+.section.dark .title h2,
+.section.dark .title h3,
+.section.dark .title h4,
+.section.dark .title h5,
+.section.dark .title h6 {
+  color: #ffffff;
 }
