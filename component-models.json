@@ -77,6 +77,21 @@
             "value": "h6"
           }
         ]
+      },
+      {
+        "variant": "style",
+        "component": "select",
+        "name": "titleStyle",
+        "type": "string",
+        "label": "Title Style",
+        "enum": [
+          "hero",
+          "section",
+          "subsection",
+          "eyebrow",
+          "cta"
+        ],
+        "default": "section"
       }
     ]
   },
