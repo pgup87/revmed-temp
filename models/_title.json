@@ -56,10 +56,8 @@
           ]
         },
         {
-          "variant": "style",
           "component": "select",
           "name": "titleStyle",
-          "type": "string",
           "label": "Title Style",
             "enum": [
               "hero",
