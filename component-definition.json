@@ -31,7 +31,7 @@
           }
         },
         {
-          "title": "Title_Cus",
+          "title": "Title Custom",
           "id": "title_cus",
           "plugins": {
             "xwalk": {
