@@ -80,29 +80,31 @@
     "id": "title_cus",
     "fields": [
       {
-        "name": "text",
-        "type": "text",
-        "label": "Title Text"
+        "component": "text",
+        "name": "title",
+        "label": "Title"
       },
       {
+        "component": "select",
         "name": "type",
-        "type": "select",
-        "label": "Type",
+        "label": "Heading Level",
         "options": [
-          { "displayValue": "Heading 1", "value": "h1" },
-          { "displayValue": "Heading 2", "value": "h2" }
-        ]
+          { "name": "Heading 1", "value": "h1" },
+          { "name": "Heading 2", "value": "h2" }
+        ],
+        "value": "h2"
       },
       {
+        "component": "select",
         "name": "style",
-        "type": "select",
-        "label": "Style Variation",
+        "label": "Title Style",
         "options": [
-          { "displayValue": "Default", "value": "" },
-          { "displayValue": "Hero", "value": "hero" },
-          { "displayValue": "Section Accent", "value": "accent" },
-          { "displayValue": "Underlined", "value": "underlined" }
-        ]
+          { "name": "Default", "value": "" },
+          { "name": "Hero", "value": "hero" },
+          { "name": "Section Accent", "value": "accent" },
+          { "name": "Underlined", "value": "underlined" }
+        ],
+        "value": ""
       }
     ]
   },
