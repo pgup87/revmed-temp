@@ -63,7 +63,7 @@
       },
       {
         "component": "select",
-        "name": "style",
+        "name": "classes",
         "label": "Title Style",
         "options": [
           { "name": "Hero", "value": "hero" },
@@ -96,7 +96,7 @@
       },
       {
         "component": "select",
-        "name": "style",
+        "name": "classes",
         "label": "Title Style",
         "options": [
           { "name": "Default", "value": "" },
