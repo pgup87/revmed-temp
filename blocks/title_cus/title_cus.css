@@ -1,0 +1,30 @@
+/* Scoped to the title block */
+.title {
+    margin: 2rem 0;
+    font-family: var(--body-font-family);
+}
+
+/* Variation: Hero (Large, White) */
+.title.hero h1 {
+    font-size: 3.5rem;
+    color: #ffffff;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Variation: Accent (The Teal/Purple look) */
+.title.accent h2 {
+    color: #4b2d83; /* Example Purple from site */
+    font-weight: 700;
+    position: relative;
+}
+
+/* Variation: Underlined */
+.title.underlined h2::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 3px;
+    background-color: #00a1ab; /* Teal accent */
+    margin-top: 10px;
+}

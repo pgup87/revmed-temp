@@ -12,6 +12,7 @@
       "image",
       "button",
       "title",
+      "title_cus",
       "hero",
       "cards",
       "columns",
@@ -36,7 +37,8 @@
       "text",
       "image",
       "button",
-      "title"
+      "title",
+      "title_cus"
     ]
   }
 ]

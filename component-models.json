@@ -77,6 +77,43 @@
     ]
   },
   {
+    "id": "title_cus",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title"
+      },
+      {
+        "component": "select",
+        "name": "type",
+        "label": "Heading Level",
+        "options": [
+          { "name": "H1", "value": "h1" },
+          { "name": "H2", "value": "h2" },
+          { "name": "H3", "value": "h3" },
+          { "name": "H4", "value": "h4" },
+          { "name": "H5", "value": "h5" },
+          { "name": "H6", "value": "h6" }
+        ],
+        "value": "h2"
+      },
+      {
+        "component": "select",
+        "name": "style",
+        "label": "Title Style",
+        "options": [
+          { "name": "Hero", "value": "hero" },
+          { "name": "Section", "value": "section" },
+          { "name": "Subsection", "value": "subsection" },
+          { "name": "Eyebrow", "value": "eyebrow" },
+          { "name": "CTA", "value": "cta" }
+        ],
+        "value": "section"
+      }
+    ]
+  },
+  {
     "id": "button",
     "fields": [
       {
