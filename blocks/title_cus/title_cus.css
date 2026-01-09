@@ -1,11 +1,11 @@
 /* Scoped to the title block */
-.title {
+.title_cus {
     margin: 2rem 0;
     font-family: var(--body-font-family);
 }
 
 /* Variation: Hero (Large, White) */
-.title.hero h1 {
+.title_cus.hero h1 {
     font-size: 3.5rem;
     color: #ffffff;
     text-align: center;
@@ -13,14 +13,14 @@
 }
 
 /* Variation: Accent (The Teal/Purple look) */
-.title.accent h2 {
+.title_cus.accent h2 {
     color: #4b2d83; /* Example Purple from site */
     font-weight: 700;
     position: relative;
 }
 
 /* Variation: Underlined */
-.title.underlined h2::after {
+.title_cus.underlined h2::after {
     content: '';
     display: block;
     width: 50px;

@@ -80,36 +80,29 @@
     "id": "title_cus",
     "fields": [
       {
-        "component": "text",
-        "name": "title",
-        "label": "Title"
+        "name": "text",
+        "type": "text",
+        "label": "Title Text"
       },
       {
-        "component": "select",
         "name": "type",
-        "label": "Heading Level",
+        "type": "select",
+        "label": "Type",
         "options": [
-          { "name": "H1", "value": "h1" },
-          { "name": "H2", "value": "h2" },
-          { "name": "H3", "value": "h3" },
-          { "name": "H4", "value": "h4" },
-          { "name": "H5", "value": "h5" },
-          { "name": "H6", "value": "h6" }
-        ],
-        "value": "h2"
+          { "displayValue": "Heading 1", "value": "h1" },
+          { "displayValue": "Heading 2", "value": "h2" }
+        ]
       },
       {
-        "component": "select",
         "name": "style",
-        "label": "Title Style",
+        "type": "select",
+        "label": "Style Variation",
         "options": [
-          { "name": "Hero", "value": "hero" },
-          { "name": "Section", "value": "section" },
-          { "name": "Subsection", "value": "subsection" },
-          { "name": "Eyebrow", "value": "eyebrow" },
-          { "name": "CTA", "value": "cta" }
-        ],
-        "value": "section"
+          { "displayValue": "Default", "value": "" },
+          { "displayValue": "Hero", "value": "hero" },
+          { "displayValue": "Section Accent", "value": "accent" },
+          { "displayValue": "Underlined", "value": "underlined" }
+        ]
       }
     ]
   },
