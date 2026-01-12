@@ -38,10 +38,10 @@
               "page": {
                 "resourceType": "core/franklin/components/title/v1/title",
                 "template": {
-                  "name": "Title Cus",
+                  "name": "Title",
                   "model": "title_cus",
                   "tag": "div",
-                  "classes": ["title-cus"]
+                  "classes": ["title_cus"]
                 }
               }
             }
