@@ -1,14 +1,17 @@
 export default function decorate(block) {
-  // EDS automatically wraps content in divs. We extract the text and type.
-  const rows = [...block.children];
-  const titleText = rows[0]?.textContent.trim();
-  const type = rows[1]?.textContent.trim() || 'h2'; // Default to h2
+  // Extract text from the first row/cell
+  const titleText = block.querySelector(':scope > div > div')?.textContent.trim();
 
-  // Create the semantic heading element
-  const header = document.createElement(type);
-  header.textContent = titleText;
-  
-  // Clear the block and append the new header
-  block.textContent = '';
-  block.append(header);
+  // Extract type (h1/h2) from the second row/cell
+  const typeRow = block.querySelector(':scope > div:nth-child(2) > div');
+  const type = typeRow ? typeRow.textContent.trim().toLowerCase() : 'h2';
+
+  if (titleText) {
+    const header = document.createElement(type);
+    header.textContent = titleText;
+
+    // Clear the block and append the new header
+    block.textContent = '';
+    block.append(header);
+  }
 }

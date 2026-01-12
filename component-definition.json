@@ -31,6 +31,22 @@
           }
         },
         {
+          "id": "title_cus",
+          "title": "Custom Title",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "template": {
+                  "name": "Title Cus",
+                  "model": "title_cus",
+                  "tag": "div",
+                  "classes": ["title-cus"]
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Title Custom",
           "id": "title_cus",
           "plugins": {
