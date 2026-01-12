@@ -82,7 +82,8 @@
       {
         "component": "text",
         "name": "title",
-        "label": "Title"
+        "label": "Title Text",
+        "value": "Headline"
       },
       {
         "component": "select",
@@ -90,17 +91,18 @@
         "label": "Heading Level",
         "options": [
           { "name": "Heading 1", "value": "h1" },
-          { "name": "Heading 2", "value": "h2" }
+          { "name": "Heading 2", "value": "h2" },
+          { "name": "Heading 3", "value": "h3" }
         ],
         "value": "h2"
       },
       {
         "component": "select",
         "name": "classes",
-        "label": "Title Style",
+        "label": "Style Variation",
         "options": [
           { "name": "Default", "value": "" },
-          { "name": "Hero", "value": "hero" },
+          { "name": "Hero (Large/White)", "value": "hero" },
           { "name": "Section Accent", "value": "accent" },
           { "name": "Underlined", "value": "underlined" }
         ],

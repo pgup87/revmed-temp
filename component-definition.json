@@ -47,20 +47,6 @@
           }
         },
         {
-          "title": "Title Custom",
-          "id": "title_cus",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/title/v1/title",
-                "template": {
-                  "model": "title_cus"
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Image",
           "id": "image",
           "plugins": {
