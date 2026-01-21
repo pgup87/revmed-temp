@@ -1,262 +1,166 @@
-// blocks/header/header.js
+import { getMetadata } from '../../scripts/aem.js';
+import { loadFragment } from '../fragment/fragment.js';
 
-/**
- * RevMed Clinical Trials - Header Block
- * Supports Universal Editor with dropdown hover navigation
- */
+// media query match that indicates mobile/tablet width
+const isDesktop = window.matchMedia('(min-width: 900px)');
 
-/**
- * Loads a fragment from the specified path
- * @param {string} path The path to the fragment
- * @returns {HTMLElement} The root element of the fragment
- */
-async function loadFragment(path) {
-  if (path && path.startsWith('/')) {
-    const resp = await fetch(`${path}.plain.html`);
-    if (resp.ok) {
-      const main = document.createElement('main');
-      main.innerHTML = await resp.text();
-
-      // Decorate blocks in the fragment
-      const { decorateBlocks, loadBlocks } = await import('../scripts.js');
-      decorateBlocks(main);
-      await loadBlocks(main);
-
-      return main;
+function closeOnEscape(e) {
+  if (e.code === 'Escape') {
+    const nav = document.getElementById('nav');
+    const navSections = nav.querySelector('.nav-sections');
+    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+    if (navSectionExpanded && isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleAllNavSections(navSections);
+      navSectionExpanded.focus();
+    } else if (!isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleMenu(nav, navSections);
+      nav.querySelector('button').focus();
     }
   }
-  return null;
+}
+
+function closeOnFocusLost(e) {
+  const nav = e.currentTarget;
+  if (!nav.contains(e.relatedTarget)) {
+    const navSections = nav.querySelector('.nav-sections');
+    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+    if (navSectionExpanded && isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleAllNavSections(navSections, false);
+    } else if (!isDesktop.matches) {
+      // eslint-disable-next-line no-use-before-define
+      toggleMenu(nav, navSections, false);
+    }
+  }
+}
+
+function openOnKeydown(e) {
+  const focused = document.activeElement;
+  const isNavDrop = focused.className === 'nav-drop';
+  if (isNavDrop && (e.code === 'Enter' || e.code === 'Space')) {
+    const dropExpanded = focused.getAttribute('aria-expanded') === 'true';
+    // eslint-disable-next-line no-use-before-define
+    toggleAllNavSections(focused.closest('.nav-sections'));
+    focused.setAttribute('aria-expanded', dropExpanded ? 'false' : 'true');
+  }
+}
+
+function focusNavSection() {
+  document.activeElement.addEventListener('keydown', openOnKeydown);
 }
 
 /**
- * Decorates the header block
+ * Toggles all nav sections
+ * @param {Element} sections The container element
+ * @param {Boolean} expanded Whether the element should be expanded or collapsed
+ */
+function toggleAllNavSections(sections, expanded = false) {
+  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
+    section.setAttribute('aria-expanded', expanded);
+  });
+}
+
+/**
+ * Toggles the entire nav
+ * @param {Element} nav The container element
+ * @param {Element} navSections The nav sections within the container element
+ * @param {*} forceExpanded Optional param to force nav expand behavior when not null
+ */
+function toggleMenu(nav, navSections, forceExpanded = null) {
+  const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
+  const button = nav.querySelector('.nav-hamburger button');
+  document.body.style.overflowY = (expanded || isDesktop.matches) ? '' : 'hidden';
+  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
+  button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
+  // enable nav dropdown keyboard accessibility
+  const navDrops = navSections.querySelectorAll('.nav-drop');
+  if (isDesktop.matches) {
+    navDrops.forEach((drop) => {
+      if (!drop.hasAttribute('tabindex')) {
+        drop.setAttribute('tabindex', 0);
+        drop.addEventListener('focus', focusNavSection);
+      }
+    });
+  } else {
+    navDrops.forEach((drop) => {
+      drop.removeAttribute('tabindex');
+      drop.removeEventListener('focus', focusNavSection);
+    });
+  }
+
+  // enable menu collapse on escape keypress
+  if (!expanded || isDesktop.matches) {
+    // collapse menu on escape press
+    window.addEventListener('keydown', closeOnEscape);
+    // collapse menu on focus lost
+    nav.addEventListener('focusout', closeOnFocusLost);
+  } else {
+    window.removeEventListener('keydown', closeOnEscape);
+    nav.removeEventListener('focusout', closeOnFocusLost);
+  }
+}
+
+/**
+ * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // Load nav content from fragment
-  const navMeta = block.querySelector('a[href*="/nav"]');
-  const navPath = navMeta ? new URL(navMeta.href).pathname : '/nav';
+  // load nav as fragment
+  const navMeta = getMetadata('nav');
+  const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
-  // Clear the block
+  // decorate nav DOM
   block.textContent = '';
-
-  if (!fragment) {
-    return;
-  }
-
-  // Build header structure
   const nav = document.createElement('nav');
-  nav.className = 'header-nav';
-  nav.setAttribute('aria-label', 'Main navigation');
+  nav.id = 'nav';
+  while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  // Expected structure in nav fragment:
-  // Row 1: Logo
-  // Row 2: Navigation links
-  // Row 3: CTA button (Contact Us)
+  const classes = ['brand', 'sections', 'tools'];
+  classes.forEach((c, i) => {
+    const section = nav.children[i];
+    if (section) section.classList.add(`nav-${c}`);
+  });
 
-  const sections = fragment.querySelectorAll(':scope > div');
-
-  if (sections.length >= 3) {
-    // Logo section
-    const logoSection = sections[0];
-    const logo = logoSection.querySelector('picture, img');
-    if (logo) {
-      const logoLink = document.createElement('a');
-      logoLink.href = '/';
-      logoLink.className = 'header-logo';
-      logoLink.setAttribute('aria-label', 'Revolution Medicines Home');
-      logoLink.appendChild(logo.cloneNode(true));
-      nav.appendChild(logoLink);
-    }
-
-    // Navigation menu
-    const navSection = sections[1];
-    const navLinks = navSection.querySelectorAll('a');
-
-    if (navLinks.length > 0) {
-      const navList = document.createElement('ul');
-      navList.className = 'header-menu';
-      navList.setAttribute('role', 'menubar');
-
-      navLinks.forEach((link) => {
-        const li = document.createElement('li');
-        li.className = 'header-menu-item';
-        li.setAttribute('role', 'none');
-
-        const menuLink = link.cloneNode(true);
-        menuLink.setAttribute('role', 'menuitem');
-
-        // Check if this is a parent item that should have a dropdown
-        // For RevMed, "Clinical Trials" might have sub-items
-        const linkText = menuLink.textContent.trim();
-
-        // Add dropdown indicator for items that might have submenus
-        if (linkText === 'Clinical Trials') {
-          menuLink.classList.add('has-dropdown');
-
-          // Create dropdown menu
-          const dropdown = document.createElement('ul');
-          dropdown.className = 'header-dropdown';
-          dropdown.setAttribute('role', 'menu');
-          dropdown.setAttribute('aria-label', `${linkText} submenu`);
-
-          // Add dropdown items - these would come from your content
-          // For now, adding placeholder structure
-          const dropdownItems = [
-            { text: 'All Clinical Trials', href: '/clinical-trials' },
-            { text: 'NSCLC Trials', href: '/clinical-trials#nsclc' },
-            { text: 'PDAC Trials', href: '/clinical-trials#pdac' },
-            { text: 'CRC Trials', href: '/clinical-trials#crc' }
-          ];
-
-          dropdownItems.forEach((item) => {
-            const dropdownLi = document.createElement('li');
-            dropdownLi.setAttribute('role', 'none');
-
-            const dropdownLink = document.createElement('a');
-            dropdownLink.href = item.href;
-            dropdownLink.textContent = item.text;
-            dropdownLink.setAttribute('role', 'menuitem');
-
-            dropdownLi.appendChild(dropdownLink);
-            dropdown.appendChild(dropdownLi);
-          });
-
-          li.appendChild(menuLink);
-          li.appendChild(dropdown);
-        } else {
-          li.appendChild(menuLink);
-        }
-
-        navList.appendChild(li);
-      });
-
-      nav.appendChild(navList);
-    }
-
-    // CTA button (Contact Us)
-    const ctaSection = sections[2];
-    const ctaLink = ctaSection.querySelector('a');
-    if (ctaLink) {
-      const ctaButton = ctaLink.cloneNode(true);
-      ctaButton.className = 'header-cta';
-      nav.appendChild(ctaButton);
-    }
+  const navBrand = nav.querySelector('.nav-brand');
+  const brandLink = navBrand.querySelector('.button');
+  if (brandLink) {
+    brandLink.className = '';
+    brandLink.closest('.button-container').className = '';
   }
 
-  // Mobile menu toggle
-  const hamburger = document.createElement('button');
-  hamburger.className = 'header-hamburger';
-  hamburger.setAttribute('aria-label', 'Open navigation menu');
-  hamburger.setAttribute('aria-expanded', 'false');
-  hamburger.innerHTML = `
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-    <span class="hamburger-line"></span>
-  `;
-
-  hamburger.addEventListener('click', () => {
-    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
-    hamburger.setAttribute('aria-expanded', !expanded);
-    nav.classList.toggle('is-open');
-    hamburger.classList.toggle('is-active');
-
-    // Prevent body scroll when menu is open
-    document.body.style.overflow = expanded ? '' : 'hidden';
-  });
-
-  nav.insertBefore(hamburger, nav.querySelector('.header-menu'));
-
-  // Handle dropdown interactions
-  const dropdownItems = nav.querySelectorAll('.has-dropdown');
-
-  dropdownItems.forEach((item) => {
-    const link = item.querySelector('a');
-    const dropdown = item.querySelector('.header-dropdown');
-
-    // Hover events for desktop
-    item.addEventListener('mouseenter', () => {
-      item.classList.add('is-active');
-      dropdown.classList.add('is-visible');
+  const navSections = nav.querySelector('.nav-sections');
+  if (navSections) {
+    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
+      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
+      navSection.addEventListener('click', () => {
+        if (isDesktop.matches) {
+          const expanded = navSection.getAttribute('aria-expanded') === 'true';
+          toggleAllNavSections(navSections);
+          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        }
+      });
     });
+  }
 
-    item.addEventListener('mouseleave', () => {
-      item.classList.remove('is-active');
-      dropdown.classList.remove('is-visible');
-    });
+  // hamburger for mobile
+  const hamburger = document.createElement('div');
+  hamburger.classList.add('nav-hamburger');
+  hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="Open navigation">
+      <span class="nav-hamburger-icon"></span>
+    </button>`;
+  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
+  nav.prepend(hamburger);
+  nav.setAttribute('aria-expanded', 'false');
+  // prevent mobile nav behavior on window resize
+  toggleMenu(nav, navSections, isDesktop.matches);
+  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
-    // Click/touch events for mobile
-    link.addEventListener('click', (e) => {
-      if (window.innerWidth < 1024) {
-        e.preventDefault();
-        const isActive = item.classList.contains('is-active');
-
-        // Close all other dropdowns
-        dropdownItems.forEach((otherItem) => {
-          if (otherItem !== item) {
-            otherItem.classList.remove('is-active');
-            otherItem.querySelector('.header-dropdown')?.classList.remove('is-visible');
-          }
-        });
-
-        // Toggle current dropdown
-        item.classList.toggle('is-active', !isActive);
-        dropdown.classList.toggle('is-visible', !isActive);
-      }
-    });
-
-    // Keyboard navigation
-    link.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'Enter') {
-        e.preventDefault();
-        item.classList.add('is-active');
-        dropdown.classList.add('is-visible');
-        dropdown.querySelector('a')?.focus();
-      }
-    });
-
-    // Allow escape to close dropdown
-    dropdown.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        item.classList.remove('is-active');
-        dropdown.classList.remove('is-visible');
-        link.focus();
-      }
-    });
-  });
-
-  // Sticky header on scroll
-  let lastScroll = 0;
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-
-    if (currentScroll > 100) {
-      block.classList.add('is-sticky');
-
-      // Hide on scroll down, show on scroll up
-      if (currentScroll > lastScroll && currentScroll > 300) {
-        block.classList.add('is-hidden');
-      } else {
-        block.classList.remove('is-hidden');
-      }
-    } else {
-      block.classList.remove('is-sticky');
-      block.classList.remove('is-hidden');
-    }
-
-    lastScroll = currentScroll;
-  });
-
-  block.appendChild(nav);
-
-  // Close mobile menu on resize to desktop
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024) {
-      nav.classList.remove('is-open');
-      hamburger.classList.remove('is-active');
-      hamburger.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-    }
-  });
+  const navWrapper = document.createElement('div');
+  navWrapper.className = 'nav-wrapper';
+  navWrapper.append(nav);
+  block.append(navWrapper);
 }
